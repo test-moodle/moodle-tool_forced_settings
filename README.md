@@ -1,16 +1,16 @@
 # Forced Settings for Moodle
 
-A Moodle admin tool plugin that allows forcing configuration settings from external files.
+A Moodle admin tool plugin that sets up forced settings from external text files.
 
 ## Features
 
-- **JSON format support**: Built-in clean and readable configuration files
-- **Extensible architecture**: Easy to add new configuration formats
-- **Automatic format detection**: Based on file extension
-- **Custom loaders**: Use custom loaders without modifying plugin code
-- **Safe loading**: Error handling for production environments
-- **CLI validation tool**: Validate JSON configuration files
-- **Pre-setup execution**: Runs before Moodle setup, using only native PHP functions
+1. **JSON format support**: Built-in clean and readable configuration files
+2. **Extensible architecture**: Easy to add new configuration formats
+3. **Automatic format detection**: Based on file extension
+4. **Custom loaders**: Use custom loaders without modifying plugin code
+5. **Safe loading**: Error handling for production environments
+6. **CLI validation tool**: Validate JSON configuration files
+7. **Pre-setup execution**: Runs before Moodle setup, using only native PHP functions
 
 ## Quick Start
 
@@ -19,9 +19,9 @@ A Moodle admin tool plugin that allows forcing configuration settings from exter
 Add the following to your `config.php` before `require_once(__DIR__ . '/lib/setup.php');`:
 
 ```php
-// Override settings from configuration file.
-require_once(__DIR__ . '/admin/tool/forced_settings/classes/local/settings_overrider.php');
-\tool_forced_settings\local\settings_overrider::settings_from($CFG, __DIR__ . '/.moodle_settings.json');
+// Set up forced settings from configuration file.
+require_once(__DIR__ . '/admin/tool/forced_settings/classes/local/forced_settings.php');
+\tool_forced_settings\local\forced_settings::from($CFG, __DIR__ . '/.moodle_settings.json');
 ```
 
 **Note**: The `settings_from()` method directly modifies the provided `$CFG` object with the configuration from the file. It does not return any value.
@@ -135,7 +135,7 @@ class yaml_loader implements config_loader {
 2. Use it in `config.php`:
 
 ```php
-\tool_forced_settings\local\settings_overrider::settings_from($CFG, __DIR__ . '/config.yaml');
+\tool_forced_settings\local\forced_settings::from($CFG, __DIR__ . '/config.yaml');
 ```
 
 The plugin automatically loads `yaml_loader.php` based on the file extension.
@@ -150,7 +150,7 @@ $customLoaders = [
     'ini' => 'local/custom/ini_loader.php',  // Relative to Moodle home
 ];
 
-\tool_forced_settings\local\settings_overrider::settings_from(
+\tool_forced_settings\local\forced_settings::from(
     $CFG,
     __DIR__ . '/config.yaml',
     $customLoaders
@@ -207,11 +207,11 @@ Main method to load and apply configuration settings directly to the provided `$
 
 ```php
 // Basic usage with built-in JSON loader
-\tool_forced_settings\local\settings_overrider::settings_from($CFG, '.moodle_settings.json');
+\tool_forced_settings\local\forced_settings::from($CFG, '.moodle_settings.json');
 
 // With custom loaders
 $loaders = ['yaml' => 'local/custom/yaml_loader.php'];
-\tool_forced_settings\local\settings_overrider::settings_from($CFG, 'config.yaml', $loaders);
+\tool_forced_settings\local\forced_settings::from($CFG, 'config.yaml', $loaders);
 ```
 
 ### CLI Tool: `validate_config.php`
@@ -244,7 +244,7 @@ php admin/tool/forced_settings/cli/validate_config.php --file=.moodle_settings.j
 php admin/tool/forced_settings/cli/validate_config.php --file=config.yaml --loader=local/custom/yaml_loader.php
 
 # Verbose output
-php admin/tool/forced_settings/cli/validate_config.php -f .moodle_settings.json -v
+php admin/tool/forced_settings/cli/validate_config.php -f=.moodle_settings.json -v
 ```
 
 ## Testing
@@ -258,13 +258,13 @@ The plugin includes comprehensive PHPUnit tests that document and verify all fun
 vendor/bin/phpunit --testsuite tool_forced_settings_testsuite
 
 # Run specific test file
-vendor/bin/phpunit admin/tool/forced_settings/tests/settings_overrider_test.php
+vendor/bin/phpunit admin/tool/forced_settings/tests/forced_settings_test.php
 vendor/bin/phpunit admin/tool/forced_settings/tests/json_loader_test.php
 ```
 
 ### Test Coverage
 
-**settings_overrider_test.php** - Tests for the main settings_overrider class:
+**forced_settings_test.php** - Tests for the main forced_settings class:
 - Loading configuration from JSON files
 - Plugin loader auto-detection
 - Custom loader support

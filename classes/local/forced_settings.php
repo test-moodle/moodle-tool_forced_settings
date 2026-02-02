@@ -43,7 +43,7 @@ use stdClass;
  * @author    Jordi Pujol Ahulló <jordi.pujol@urv.cat>
  * @copyright 2024 onwards to Universitat Rovira i Virgili (https://www.urv.cat)
  */
-class settings_overrider {
+class forced_settings {
     /**
      * Invoke this API from config.php before setup.php to force any Moodle setting.
      *
@@ -55,7 +55,7 @@ class settings_overrider {
      * @param array $customloaders Optional array of extension => loader_file_path for custom loaders
      * @throws Exception If file format is not supported
      */
-    public static function settings_from(stdClass $cfg, string $filepath, array $customloaders = []): void {
+    public static function from(stdClass $cfg, string $filepath, array $customloaders = []): void {
         $loader = self::get_loader_for_file($filepath, $customloaders);
         $settings = $loader->load($filepath);
 
@@ -65,7 +65,7 @@ class settings_overrider {
         }
         $settings['tool_forced_settings']['loader'] = get_class($loader);
 
-        self::override_settings_with($cfg, $settings);
+        self::add_forced_settings_from($cfg, $settings);
     }
 
     /**
@@ -149,12 +149,12 @@ class settings_overrider {
     }
 
     /**
-     * Overrides the $cfg settings, depending on whether they are Moodle core or other plugins.
+     * Adds forced settings to $cfg, depending on whether they are Moodle core or other plugins.
      *
      * @param stdClass $cfg The configuration object to populate
      * @param array $settings Parsed configuration settings
      */
-    private static function override_settings_with(stdClass $cfg, array $settings): void {
+    private static function add_forced_settings_from(stdClass $cfg, array $settings): void {
         foreach ($settings as $component => $values) {
             if ($component === 'moodle') {
                 foreach ($values as $setting => $value) {

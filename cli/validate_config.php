@@ -33,7 +33,7 @@ require_once("{$CFG->libdir}/clilib.php");
 
 use tool_forced_settings\local\config_formatter;
 use tool_forced_settings\local\config_loader;
-use tool_forced_settings\local\settings_overrider;
+use tool_forced_settings\local\forced_settings;
 
 // Define options.
 [$options, $unrecognized] = cli_get_params(
@@ -110,8 +110,8 @@ if (!empty($loaderpath)) {
     $customloaders[$extension] = $loaderpath;
 }
 
-// Load the settings_overrider class.
-require_once($CFG->dirroot . '/admin/tool/forced_settings/classes/local/settings_overrider.php');
+// Load the forced_settings class.
+require_once($CFG->dirroot . '/admin/tool/forced_settings/classes/local/forced_settings.php');
 
 cli_heading("Configuration Validation Results");
 echo "File: " . realpath($filepath) . "\n";
@@ -122,7 +122,7 @@ if (!empty($loaderpath)) {
 echo str_repeat('-', 80) . "\n\n";
 
 try {
-    // Use settings_overrider to validate by attempting to load the file.
+    // Use forced_settings to validate by attempting to load the file.
     // We'll capture the data by temporarily using a custom global variable.
     $tempdata = null;
 

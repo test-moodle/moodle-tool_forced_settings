@@ -17,17 +17,17 @@
 namespace tool_forced_settings;
 
 use stdClass;
-use tool_forced_settings\local\settings_overrider;
+use tool_forced_settings\local\forced_settings;
 
 /**
- * Tests for settings_overrider class.
+ * Tests for forced_settings class.
  *
  * @package    tool_forced_settings
  * @copyright  2026 onwards to Universitat Rovira i Virgili <https://www.urv.cat>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \tool_forced_settings\local\settings_overrider
+ * @covers     \tool_forced_settings\local\forced_settings
  */
-final class settings_overrider_test extends \basic_testcase {
+final class forced_settings_test extends \basic_testcase {
     /** @var stdClass The configuration object for testing. */
     private stdClass $cfg;
 
@@ -53,7 +53,7 @@ final class settings_overrider_test extends \basic_testcase {
      * Test that moodle section settings are loaded into $cfg.
      */
     public function test_moodle_section_loaded_into_cfg(): void {
-        settings_overrider::settings_from($this->cfg, $this->get_fixture('valid_config.json'));
+        forced_settings::from($this->cfg, $this->get_fixture('valid_config.json'));
 
         // Verify moodle core settings are in $cfg directly.
         $this->assertTrue($this->cfg->debug);
@@ -65,7 +65,7 @@ final class settings_overrider_test extends \basic_testcase {
      * Test that plugin sections are loaded into $cfg->forced_plugin_settings.
      */
     public function test_plugin_sections_loaded_into_forced_plugin_settings(): void {
-        settings_overrider::settings_from($this->cfg, $this->get_fixture('valid_config.json'));
+        forced_settings::from($this->cfg, $this->get_fixture('valid_config.json'));
 
         // Verify plugin settings are in $cfg->forced_plugin_settings.
         $this->assertArrayHasKey('auth_ldap', $this->cfg->forced_plugin_settings);
@@ -87,7 +87,7 @@ final class settings_overrider_test extends \basic_testcase {
      * Test that nested structures in moodle section are preserved in $cfg.
      */
     public function test_nested_structures_preserved_in_cfg(): void {
-        settings_overrider::settings_from($this->cfg, $this->get_fixture('nested_config.json'));
+        forced_settings::from($this->cfg, $this->get_fixture('nested_config.json'));
 
         // Verify nested structure is preserved in $cfg.
         $this->assertIsArray($this->cfg->behat_profiles);
@@ -105,7 +105,7 @@ final class settings_overrider_test extends \basic_testcase {
      */
     public function test_plugin_loader_autodetection(): void {
         // Load .test file - should use test_loader from plugin automatically.
-        settings_overrider::settings_from($this->cfg, $this->get_fixture('dummy.test'));
+        forced_settings::from($this->cfg, $this->get_fixture('dummy.test'));
 
         // Verify test_loader was used (it returns specific test data).
         $this->assertTrue($this->cfg->debug);
@@ -120,7 +120,7 @@ final class settings_overrider_test extends \basic_testcase {
      * a loader path as the third parameter to settings_from().
      *
      * Example in config.php:
-     * settings_overrider::settings_from(
+     * forced_settings::from(
      *     $CFG,
      *     '.moodle_settings.yaml',
      *     ['yaml' => 'local/myloaders/yaml_loader.php']
@@ -128,7 +128,7 @@ final class settings_overrider_test extends \basic_testcase {
      */
     public function test_custom_loader(): void {
         // Explicitly specify custom loader path as third parameter.
-        settings_overrider::settings_from(
+        forced_settings::from(
             $this->cfg,
             $this->get_fixture('test_config.custom'),
             ['custom' => $this->get_fixture('custom_loader.php')]
@@ -146,7 +146,7 @@ final class settings_overrider_test extends \basic_testcase {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('does not exist');
 
-        settings_overrider::settings_from($this->cfg, '/nonexistent/file.json');
+        forced_settings::from($this->cfg, '/nonexistent/file.json');
     }
 
     /**
@@ -156,7 +156,7 @@ final class settings_overrider_test extends \basic_testcase {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No loader found for extension: xyz');
 
-        settings_overrider::settings_from($this->cfg, $this->get_fixture('unsupported.xyz'));
+        forced_settings::from($this->cfg, $this->get_fixture('unsupported.xyz'));
     }
 
     /**
@@ -166,7 +166,7 @@ final class settings_overrider_test extends \basic_testcase {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Loader file not found');
 
-        settings_overrider::settings_from(
+        forced_settings::from(
             $this->cfg,
             $this->get_fixture('unsupported.xyz'),
             ['xyz' => '/nonexistent/loader.php']
