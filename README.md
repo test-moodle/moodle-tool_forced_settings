@@ -24,7 +24,7 @@ require_once(__DIR__ . '/admin/tool/forced_settings/classes/local/forced_setting
 \tool_forced_settings\local\forced_settings::from($CFG, __DIR__ . '/.moodle_settings.json');
 ```
 
-**Note**: The `settings_from()` method directly modifies the provided `$CFG` object with the configuration from the file. It does not return any value.
+**Note**: The `from()` method directly modifies the provided `$CFG` object with the configuration from the file. It does not return any value.
 
 ### Configuration File Format
 
@@ -185,7 +185,7 @@ class MyYamlLoader implements config_loader {
 
 ## API Reference
 
-### `settings_from(stdClass $cfg, string $filepath, array $customloaders = []): void`
+### `forced_settings::from(stdClass $cfg, string $filepath, array $customloaders = []): void`
 
 Main method to load and apply configuration settings directly to the provided `$cfg` object.
 
