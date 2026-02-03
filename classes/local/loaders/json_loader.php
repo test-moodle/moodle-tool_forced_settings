@@ -33,8 +33,6 @@ use tool_forced_settings\local\config_loader;
  *
  * Note: This class runs before Moodle setup, so it cannot use Moodle functions.
  * Only native PHP functions are available.
- *
- * @phpcs:disable moodle.PHP.ForbiddenFunctions.Found
  */
 class json_loader implements config_loader {
     /**
